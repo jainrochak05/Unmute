@@ -1,0 +1,347 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div style="max-width:900px;margin:0 auto;">
+
+    <!-- Header -->
+
+    <div style="text-align:center;margin-bottom:2.5rem;">
+
+        <h1 class="page-title">
+            Community Stories
+        </h1>
+
+        <p class="page-subtitle">
+            Read anonymous experiences shared by others. Sometimes knowing you're not alone can make all the difference.
+        </p>
+
+    </div>
+
+
+    <!-- Search + Filters -->
+
+    <div class="card" style="margin-bottom:2rem;">
+
+        <form method="GET">
+
+            <input
+                type="text"
+                name="search"
+                value="{{ search }}"
+                placeholder="🔍 Search stories..."
+            >
+
+            <div class="tag-section" style="margin-top:1.5rem;">
+
+                <label class="tag-title">
+
+                    Filter by emotion
+
+                </label>
+
+                <div class="tag-container">
+
+                    <a
+                        href="{{ url_for('stories.community_feed') }}"
+                        class="tag-filter {% if not selected_tag %}active{% endif %}"
+                    >
+
+                        All
+
+                    </a>
+
+                    {% for tag in mood_tags %}
+
+                    <a
+                        href="{{ url_for('stories.community_feed', tag=tag) }}"
+                        class="tag-filter {% if selected_tag==tag %}active{% endif %}"
+                    >
+
+                        {{ tag }}
+
+                    </a>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+
+            <!-- Sort Chips -->
+
+            <div style="
+                display:flex;
+                justify-content:space-between;
+                align-items:center;
+                flex-wrap:wrap;
+                gap:1rem;
+                margin-top:2rem;
+            ">
+
+                <div style="
+                    display:flex;
+                    gap:.8rem;
+                    flex-wrap:wrap;
+                ">
+
+                    <a
+                        href="{{ url_for('stories.community_feed', tag=selected_tag, search=search, sort='recent') }}"
+                        class="tag-filter {% if selected_sort=='recent' %}active{% endif %}"
+                    >
+
+                        Newest
+
+                    </a>
+
+                    <a
+                        href="{{ url_for('stories.community_feed', tag=selected_tag, search=search, sort='oldest') }}"
+                        class="tag-filter {% if selected_sort=='oldest' %}active{% endif %}"
+                    >
+
+                        Oldest
+
+                    </a>
+
+                </div>
+
+
+                <button
+                    class="btn-gold"
+                    type="submit"
+                >
+
+                    Apply Search
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+    {% if stories %}
+
+    <div style="
+        display:grid;
+        gap:1.75rem;
+    ">
+
+        {% for story in stories %}
+
+        <div class="card story-card">
+
+            <!-- Header -->
+
+            <div style="
+                display:flex;
+                justify-content:space-between;
+                align-items:flex-start;
+                margin-bottom:1rem;
+            ">
+
+                <div>
+
+                    <small style="
+                        color:var(--text-secondary);
+                        font-size:.9rem;
+                    ">
+
+                        🕒 {{ story.created_at.strftime("%d %b %Y") }}
+
+                    </small>
+
+                </div>
+
+                {% if story.tags %}
+
+                <div style="
+                    display:flex;
+                    flex-wrap:wrap;
+                    gap:.45rem;
+                    justify-content:flex-end;
+                ">
+                                    {% for tag in story.tags %}
+
+                                    <span class="story-tag">
+                
+                                        {{ tag }}
+                
+                                    </span>
+                
+                                    {% endfor %}
+                
+                                </div>
+                
+                                {% endif %}
+                
+                            </div>
+                
+                
+                            <!-- Story -->
+                
+                            <div style="
+                                margin-bottom:1.75rem;
+                            ">
+                
+                                <p style="
+                                    white-space:pre-wrap;
+                                    line-height:1.9;
+                                    font-size:1rem;
+                                    margin:0;
+                                ">
+                
+                                    {{ story.content }}
+                
+                                </p>
+                
+                            </div>
+                
+                
+                            <!-- Divider -->
+                
+                            <div style="
+                                height:1px;
+                                background:rgba(255,255,255,.06);
+                                margin-bottom:1.25rem;
+                            "></div>
+                
+                
+                            <!-- Reactions -->
+                
+                            <div style="
+                                display:flex;
+                                gap:.75rem;
+                                flex-wrap:wrap;
+                            ">
+                
+                                <form method="POST"
+                                      action="{{ url_for('stories.react_story',
+                                                         story_id=story._id,
+                                                         reaction='relate',
+                                                         tag=selected_tag,
+                                                         sort=selected_sort,
+                                                         search=search) }}">
+                
+                                    <button
+                                        type="submit"
+                                        class="reaction-pill">
+                
+                                        ❤️
+                
+                                        <span>
+                
+                                            {{ story.reactions.relate|default(0) }}
+                
+                                        </span>
+                
+                                    </button>
+                
+                                </form>
+                
+                
+                
+                                <form method="POST"
+                                      action="{{ url_for('stories.react_story',
+                                                         story_id=story._id,
+                                                         reaction='hug',
+                                                         tag=selected_tag,
+                                                         sort=selected_sort,
+                                                         search=search) }}">
+                
+                                    <button
+                                        type="submit"
+                                        class="reaction-pill">
+                
+                                        🤗
+                
+                                        <span>
+                
+                                            {{ story.reactions.hug|default(0) }}
+                
+                                        </span>
+                
+                                    </button>
+                
+                                </form>
+                
+                
+                
+                                <form method="POST"
+                                      action="{{ url_for('stories.react_story',
+                                                         story_id=story._id,
+                                                         reaction='thanks',
+                                                         tag=selected_tag,
+                                                         sort=selected_sort,
+                                                         search=search) }}">
+                
+                                    <button
+                                        type="submit"
+                                        class="reaction-pill">
+                
+                                        🌸
+                
+                                        <span>
+                
+                                            {{ story.reactions.thanks|default(0) }}
+                
+                                        </span>
+                
+                                    </button>
+                
+                                </form>
+                
+                            </div>
+                
+                        </div>
+                
+                        {% endfor %}
+                        {% else %}
+
+                        <div class="card" style="
+                            text-align:center;
+                            padding:3.5rem 2rem;
+                        ">
+                
+                            <div style="font-size:3.5rem;">
+                                🌱
+                            </div>
+                
+                            <h2 style="
+                                margin-top:1rem;
+                                font-weight:400;
+                            ">
+                
+                                No stories found
+                
+                            </h2>
+                
+                            <p style="
+                                color:var(--text-secondary);
+                                margin:1rem 0 2rem;
+                                line-height:1.8;
+                            ">
+                
+                                There aren't any community stories matching your current filters.
+                                Try selecting a different emotion or clearing your search.
+                
+                            </p>
+                
+                            <a
+                                href="{{ url_for('stories.community_feed') }}"
+                                class="btn-gold">
+                
+                                View All Stories
+                
+                            </a>
+                
+                        </div>
+                
+                        {% endif %}
+                
+                </div>
+                
+                {% endblock %}

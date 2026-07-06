@@ -1,86 +1,463 @@
 {% extends "base.html" %}
 {% block content %}
-<section class="card">
-  <h2>Dashboard</h2>
-  {% if reminder %}<div class="alert warning">{{ reminder }}</div>{% endif %}
-  <div class="quote-card">🌟 {{ quote }}</div>
 
-  <div class="grid cards">
-    <div class="mini-card"><h4>Current Mood</h4><p style="color:{{ current_mood_color }}">{{ current_mood_emoji }} {{ current_mood_label }} ({{ stats.get('current_mood','-') }})</p></div>
-    <div class="mini-card"><h4>Mood Streak</h4><p>{{ stats.get('mood_streak',0) }} days</p></div>
-    <div class="mini-card"><h4>Total Journal Entries</h4><p>{{ stats.get('total_journals',0) }}</p></div>
-    <div class="mini-card"><h4>Total Stories Shared</h4><p>{{ stats.get('total_stories',0) }}</p></div>
-    <div class="mini-card"><h4>Total AI Conversations</h4><p>{{ stats.get('total_ai_chats',0) }}</p></div>
-    <div class="mini-card"><h4>Daily Prompt Status</h4><p>{{ "Done ✅" if stats.get('prompt_done') else "Pending ⏳" }}</p></div>
-  </div>
-</section>
+<div style="max-width:700px;margin:0 auto;">
 
-<section class="card">
-  <h3>Mood Analytics</h3>
-  <div style="height:280px"><canvas id="weeklyChart"></canvas></div>
-  <div style="height:320px;margin-top:1rem"><canvas id="monthlyChart"></canvas></div>
-</section>
+    <!-- Welcome -->
 
-<section class="card">
-  <h3>Emotional Insights</h3>
-  <ul>
-    <li>Most common emotion: <strong>{{ insights.get('most_common_emotion','N/A') }}</strong></li>
-    <li>Best emotional week: <strong>{{ insights.get('best_week_avg',0) }}</strong></li>
-    <li>Lowest emotional week: <strong>{{ insights.get('lowest_week_avg',0) }}</strong></li>
-    <li>Most active journaling day: <strong>{{ insights.get('most_active_journaling_day','N/A') }}</strong></li>
-    <li>Average weekly mood: <strong>{{ insights.get('avg_weekly_mood',0) }}</strong></li>
-  </ul>
-</section>
+    <div style="text-align:center;margin-bottom:2rem;">
+
+        <h1 style="font-weight:300;">
+            Welcome Back
+        </h1>
+
+        <p style="color:var(--text-secondary);">
+            Here's your wellbeing snapshot for today.
+        </p>
+
+    </div>
+
+
+    <!-- Quote -->
+
+    <div class="card"
+         style="text-align:center;
+                margin-bottom:1.5rem;
+                padding:2rem;">
+
+        <div style="font-size:2rem;">
+            ✨
+        </div>
+
+        <p style="
+            margin-top:1rem;
+            font-size:1.15rem;
+            line-height:1.8;
+            font-style:italic;">
+
+            "{{ quote }}"
+
+        </p>
+
+    </div>
+
+
+    {% if reminder %}
+
+    <div class="card"
+         style="
+            margin-bottom:1.5rem;
+            border-left:4px solid var(--accent-gold);
+         ">
+
+        <strong>Reminder</strong>
+
+        <p style="
+            margin-top:.6rem;
+            color:var(--text-secondary);
+        ">
+
+            {{ reminder }}
+
+        </p>
+
+    </div>
+
+    {% endif %}
+
+
+    <!-- Snapshot -->
+
+    <div style="
+        display:grid;
+        grid-template-columns:1fr 1fr;
+        gap:1rem;
+        margin-bottom:2rem;
+    ">
+
+        <div class="card"
+             style="text-align:center;">
+
+            <div style="font-size:2.6rem;">
+                {{ current_mood_emoji }}
+            </div>
+
+            <h3 style="
+                color:{{ current_mood_color }};
+                margin:.5rem 0;">
+
+                {{ current_mood_label }}
+
+            </h3>
+
+            <small style="color:var(--text-secondary);">
+
+                Current Mood
+
+            </small>
+
+        </div>
+
+
+        <div class="card"
+             style="text-align:center;">
+
+            <div style="font-size:2rem;">
+                🔥
+            </div>
+
+            <h2 style="margin:.5rem 0;">
+
+                {{ stats.mood_streak }}
+
+            </h2>
+
+            <small style="color:var(--text-secondary);">
+
+                Day Streak
+
+            </small>
+
+        </div>
+
+    </div>
+
+
+    <!-- Progress -->
+
+    <div style="
+        display:grid;
+        grid-template-columns:repeat(2,1fr);
+        gap:1rem;
+        margin-bottom:2rem;
+    ">
+
+        <div class="card" style="text-align:center;">
+
+            <div style="font-size:1.8rem;">📖</div>
+
+            <h2>{{ stats.total_journals }}</h2>
+
+            <small>Journal Entries</small>
+
+        </div>
+
+        <div class="card" style="text-align:center;">
+
+            <div style="font-size:1.8rem;">🤝</div>
+
+            <h2>{{ stats.total_ai_chats }}</h2>
+
+            <small>Companion Chats</small>
+
+        </div>
+
+        <div class="card" style="text-align:center;">
+
+            <div style="font-size:1.8rem;">📚</div>
+
+            <h2>{{ stats.total_stories }}</h2>
+
+            <small>Stories Read</small>
+
+        </div>
+
+        <div class="card" style="text-align:center;">
+
+            <div style="font-size:1.8rem;">💭</div>
+
+            <h2>
+
+                {% if stats.prompt_done %}
+                    ✓
+                {% else %}
+                    ○
+                {% endif %}
+
+            </h2>
+
+            <small>Today's Prompt</small>
+
+        </div>
+
+    </div>
+        <!-- Mood Journey -->
+
+        <div class="card" style="margin-bottom:2rem;">
+
+            <div style="
+                display:flex;
+                justify-content:space-between;
+                align-items:center;
+                margin-bottom:1rem;
+            ">
+    
+                <h3 style="margin:0;font-weight:400;">
+                    Mood Journey
+                </h3>
+    
+                <small style="color:var(--text-secondary);">
+                    Last 7 Days
+                </small>
+    
+            </div>
+    
+            <div style="height:240px;">
+                <canvas id="weeklyMoodChart"></canvas>
+            </div>
+    
+        </div>
+    
+    
+        <!-- Emotional Insights -->
+    
+        <div class="card" style="margin-bottom:2rem;">
+    
+            <h3 style="
+                margin-bottom:1.2rem;
+                font-weight:400;">
+    
+                Emotional Insights
+    
+            </h3>
+    
+            <div style="
+                display:grid;
+                grid-template-columns:1fr 1fr;
+                gap:1rem;
+            ">
+    
+                <div class="card" style="padding:1rem;text-align:center;">
+    
+                    <small style="color:var(--text-secondary);">
+                        Most Common Mood
+                    </small>
+    
+                    <h3 style="margin-top:.5rem;">
+                        {{ insights.most_common_emotion }}
+                    </h3>
+    
+                </div>
+    
+                <div class="card" style="padding:1rem;text-align:center;">
+    
+                    <small style="color:var(--text-secondary);">
+                        Average Weekly Mood
+                    </small>
+    
+                    <h3 style="margin-top:.5rem;">
+                        {{ insights.avg_weekly_mood }}/10
+                    </h3>
+    
+                </div>
+    
+                <div class="card" style="padding:1rem;text-align:center;">
+    
+                    <small style="color:var(--text-secondary);">
+                        Best Week
+                    </small>
+    
+                    <h3 style="margin-top:.5rem;">
+                        {{ insights.best_week_avg }}/10
+                    </h3>
+    
+                </div>
+    
+                <div class="card" style="padding:1rem;text-align:center;">
+    
+                    <small style="color:var(--text-secondary);">
+                        Journaling Day
+                    </small>
+    
+                    <h3 style="margin-top:.5rem;">
+                        {{ insights.most_active_journaling_day }}
+                    </h3>
+    
+                </div>
+    
+            </div>
+    
+        </div>
+    
+    
+        <!-- Weekly Reflection -->
+    
+        <div class="card" style="margin-bottom:2rem;">
+    
+            <h3 style="
+                margin-bottom:1rem;
+                font-weight:400;">
+    
+                This Week's Reflection
+    
+            </h3>
+    
+            {% set avg = insights.avg_weekly_mood|default(0) %}
+    
+            <p style="
+                color:var(--text-secondary);
+                line-height:1.9;
+            ">
+    
+                {% if avg >= 8 %}
+    
+                    You've maintained a consistently positive emotional trend this week. Keep investing in the habits that help you feel balanced, and celebrate the small wins along the way.
+    
+                {% elif avg >= 6 %}
+    
+                    Your emotions have remained fairly steady this week. Some ups and downs are completely natural, and your regular check-ins show a healthy awareness of how you're feeling.
+    
+                {% elif avg >= 4 %}
+    
+                    This week has brought a few emotional challenges. Remember that progress isn't about feeling positive every day—it's about continuing to care for yourself through difficult moments.
+    
+                {% else %}
+    
+                    It looks like this week has been particularly difficult. Be gentle with yourself, focus on one small positive step at a time, and don't hesitate to reach out to someone you trust if you need support.
+    
+                {% endif %}
+    
+            </p>
+    
+        </div>
+            <!-- Quick Actions -->
+
+    <div class="card" style="margin-bottom:2rem;">
+
+        <h3 style="margin-bottom:1.2rem;font-weight:400;">
+            Quick Actions
+        </h3>
+
+        <div style="
+            display:grid;
+            grid-template-columns:1fr 1fr;
+            gap:1rem;
+        ">
+
+            <a href="{{ url_for('mood.mood_home') }}"
+               class="btn-gold"
+               style="text-align:center;">
+                🌿 Log Mood
+            </a>
+
+            <a href="{{ url_for('journal.journal_home') }}"
+               class="btn-outline"
+               style="text-align:center;">
+                📖 Journal
+            </a>
+
+            <a href="{{ url_for('chat.chat_home') }}"
+               class="btn-gold"
+               style="text-align:center;">
+                🤝 Companion
+            </a>
+
+            <a href="{{ url_for('resources.resources_home') }}"
+               class="btn-outline"
+               style="text-align:center;">
+                📚 Resources
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <script>
-document.addEventListener("DOMContentLoaded", function () {
-    const weeklyLabels = {{ trends.get('weekly', {}).get('labels', []) | tojson }};
-    const weeklyValues = {{ trends.get('weekly', {}).get('values', []) | tojson }};
 
-    const monthlyLabels = {{ trends.get('monthly', {}).get('labels', []) | tojson }};
-    const monthlyValues = {{ trends.get('monthly', {}).get('values', []) | tojson }};
+const ctx = document.getElementById("weeklyMoodChart");
 
-    const weeklyCanvas = document.getElementById("weeklyChart");
-    const monthlyCanvas = document.getElementById("monthlyChart");
+if (ctx) {
 
-    if (weeklyCanvas) {
-        new Chart(weeklyCanvas, {
-            type: "line",
-            data: {
-                labels: weeklyLabels,
-                datasets: [{
-                    label: "Weekly Mood Trend",
-                    data: weeklyValues,
-                    tension: 0.35,
-                    fill: false
-                }]
+    new Chart(ctx, {
+
+        type: "line",
+
+        data: {
+
+            labels: {{ trends.weekly.get("labels", []) | tojson }},
+
+            datasets: [{
+
+                data: {{ trends.weekly.get("values", []) | tojson }},
+
+                borderColor: "#C8A96A",
+
+                backgroundColor: "rgba(200,169,106,0.15)",
+
+                borderWidth: 3,
+
+                fill: true,
+
+                tension: 0.4,
+
+                pointRadius: 4,
+
+                pointHoverRadius: 6
+
+            }]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            maintainAspectRatio: false,
+
+            plugins: {
+
+                legend: {
+
+                    display: false
+
+                }
+
             },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false
-            }
-        });
-    }
 
-    if (monthlyCanvas) {
-        new Chart(monthlyCanvas, {
-            type: "line",
-            data: {
-                labels: monthlyLabels,
-                datasets: [{
-                    label: "Monthly Mood Trend",
-                    data: monthlyValues,
-                    tension: 0.35,
-                    fill: false
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false
+            scales: {
+
+                y: {
+
+                    min: 0,
+
+                    max: 10,
+
+                    ticks: {
+
+                        stepSize: 2
+
+                    },
+
+                    grid: {
+
+                        color: "rgba(255,255,255,0.05)"
+
+                    }
+
+                },
+
+                x: {
+
+                    grid: {
+
+                        display: false
+
+                    }
+
+                }
+
             }
-        });
-    }
-});
+
+        }
+
+    });
+
+}
+
 </script>
+
 {% endblock %}

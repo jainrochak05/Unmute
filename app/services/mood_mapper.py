@@ -1,18 +1,20 @@
-def mood_meta(score: int):
+def mood_meta(score):
     """
-    Returns (emoji, label, color) for mood score 1-10
+    Maps the stored mood score to the mood displayed in the UI.
+    Returns:
+        (emoji, label, color)
     """
-    try:
-        s = int(score)
-    except Exception:
-        s = 0
 
-    if s >= 9:
-        return "😊", "Excellent", "#22c55e"
-    if s >= 7:
-        return "🙂", "Happy", "#84cc16"
-    if s >= 5:
-        return "😐", "Neutral", "#eab308"
-    if s >= 3:
-        return "😔", "Sad", "#f97316"
-    return "😢", "Very Low", "#ef4444"
+    mapping = {
+        9: ("🌿", "Peaceful", "#22c55e"),
+        7: ("☀️", "Hopeful", "#84cc16"),
+        4: ("🌧️", "Anxious", "#f59e0b"),
+        2: ("🌑", "Heavy", "#ef4444"),
+    }
+
+    try:
+        score = int(score)
+    except (TypeError, ValueError):
+        score = 2
+
+    return mapping.get(score, ("❓", "Unknown", "#94a3b8"))

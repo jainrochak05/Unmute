@@ -1,21 +1,167 @@
 {% extends "base.html" %}
 {% block content %}
-<section class="card">
-  <h2>Daily Mood</h2>
-  <form method="post">
-    <input name="mood_score" type="number" min="1" max="10" placeholder="Mood score (1-10)" required>
-    <textarea name="note" placeholder="Optional note"></textarea>
-    <button class="btn" type="submit">Save Mood</button>
-  </form>
-</section>
-<section class="card">
-  <h3>Recent Mood Logs</h3>
-  {% for m in history %}
-    <div class="item">
-      <strong>{{ m.mood_score }}/10</strong> - {{ m.note }}
+
+<div style="max-width:600px;margin:0 auto;">
+
+    <div style="text-align:center;margin-bottom:2.5rem;">
+        <h1 style="font-weight:300;">Mood Canvas</h1>
+        <p style="color:var(--text-secondary);">
+            How are you feeling today?
+        </p>
     </div>
-  {% else %}
-    <p>No mood logs yet.</p>
-  {% endfor %}
-</section>
+
+    <div class="card">
+
+        <h3 style="text-align:center;font-weight:400;margin-bottom:2rem;">
+            Choose the emotion that best matches your current state.
+        </h3>
+
+        <form method="POST">
+
+            <div style="
+                display:grid;
+                grid-template-columns:1fr 1fr;
+                gap:1rem;
+            ">
+
+                <button
+                    type="submit"
+                    name="mood_score"
+                    value="9"
+                    class="btn-outline"
+                    style="padding:1.4rem;display:flex;flex-direction:column;align-items:center;gap:.5rem;">
+
+                    <span style="font-size:2rem;">🌿</span>
+
+                    <strong>Peaceful</strong>
+
+                    <small style="color:var(--text-secondary);">
+                        Calm & balanced
+                    </small>
+
+                </button>
+
+                <button
+                    type="submit"
+                    name="mood_score"
+                    value="7"
+                    class="btn-outline"
+                    style="padding:1.4rem;display:flex;flex-direction:column;align-items:center;gap:.5rem;">
+
+                    <span style="font-size:2rem;">☀️</span>
+
+                    <strong>Hopeful</strong>
+
+                    <small style="color:var(--text-secondary);">
+                        Looking ahead
+                    </small>
+
+                </button>
+
+                <button
+                    type="submit"
+                    name="mood_score"
+                    value="4"
+                    class="btn-outline"
+                    style="padding:1.4rem;display:flex;flex-direction:column;align-items:center;gap:.5rem;">
+
+                    <span style="font-size:2rem;">🌧️</span>
+
+                    <strong>Anxious</strong>
+
+                    <small style="color:var(--text-secondary);">
+                        Feeling worried
+                    </small>
+
+                </button>
+
+                <button
+                    type="submit"
+                    name="mood_score"
+                    value="2"
+                    class="btn-outline"
+                    style="padding:1.4rem;display:flex;flex-direction:column;align-items:center;gap:.5rem;">
+
+                    <span style="font-size:2rem;">🌑</span>
+
+                    <strong>Heavy</strong>
+
+                    <small style="color:var(--text-secondary);">
+                        Emotionally drained
+                    </small>
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+    {% if ai_reflection %}
+
+    <div class="card" style="margin-top:2rem;">
+
+        <h3 style="margin-bottom:1rem;font-weight:400;">
+            Gentle Reflection
+        </h3>
+
+        <p style="white-space:pre-wrap;line-height:1.8;">
+            {{ ai_reflection }}
+        </p>
+
+    </div>
+
+    {% endif %}
+
+    {% if history %}
+
+    <div class="card" style="margin-top:2rem;">
+
+        <h3 style="margin-bottom:1rem;font-weight:400;">
+            Recent Check-ins
+        </h3>
+
+        {% for mood in history[:5] %}
+
+        <div style="
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            padding:.8rem 0;
+            border-bottom:1px solid var(--border-subtle);
+        ">
+
+            <div>
+
+                {% if mood.mood_score == 9 %}
+                    🌿 Peaceful
+                {% elif mood.mood_score == 7 %}
+                    ☀️ Hopeful
+                {% elif mood.mood_score == 4 %}
+                    🌧️ Anxious
+                {% else %}
+                    🌑 Heavy
+                {% endif %}
+
+            </div>
+
+            <small style="color:var(--text-secondary);">
+
+                {% if mood.created_at %}
+                    {{ mood.created_at.strftime("%d %b %Y") }}
+                {% endif %}
+
+            </small>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+    {% endif %}
+
+</div>
+
 {% endblock %}

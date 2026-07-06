@@ -1,11 +1,21 @@
 {% extends "base.html" %}
+
 {% block content %}
-<section class="card">
-  <h2>Login</h2>
-  <form method="post">
-    <input name="email" type="email" placeholder="Email" required>
-    <input name="password" type="password" placeholder="Password" required>
-    <button class="btn" type="submit">Login</button>
-  </form>
-</section>
+<div style="max-width: 400px; margin: 4rem auto; padding: 0 1rem;">
+    <div class="card">
+        <h2 style="text-align: center; margin-bottom: 2rem; color: var(--accent-gold);">Sign In</h2>
+        <form action="{{ url_for('auth.login') }}" method="POST">
+            <div class="form-group">
+                <input type="email" name="email" placeholder="Email Address" required>
+            </div>
+            <div class="form-group">
+                <input type="password" name="password" placeholder="Password" required>
+            </div>
+            <button type="submit" class="btn-gold" style="width: 100%; margin-bottom: 1rem;">Login</button>
+        </form>
+        <p style="text-align: center; font-size: 0.9rem;" class="text-muted">
+            Don't have an account? <a href="{{ url_for('auth.register') }}" style="color: var(--text-primary);">Register</a>
+        </p>
+    </div>
+</div>
 {% endblock %}

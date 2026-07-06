@@ -7,51 +7,95 @@ from app.services.gemini_service import get_chat_reply
 
 mood_bp = Blueprint("mood", __name__)
 
+MOODS = {
+    9: "Peaceful",
+    7: "Hopeful",
+    4: "Anxious",
+    2: "Heavy",
+}
+
+
 @mood_bp.route("/", methods=["GET", "POST"])
 @login_required
 def mood_home():
     if extensions.mongo_db is None:
         flash("Database not connected.", "danger")
-        return render_template("mood.html", history=[], ai_reflection=None)
+        return render_template(
+            "mood.html",
+            history=[],
+            ai_reflection=None,
+        )
 
     db = extensions.mongo_db
     col = db["moods"]
+
     ai_reflection = None
 
     if request.method == "POST":
-        mood_score = parse_int(request.form.get("mood_score"), 0)
-        note = request.form.get("note", "").strip()
 
-        if mood_score < 1 or mood_score > 10:
-            flash("Mood score must be between 1 and 10.", "warning")
+        mood_score = parse_int(request.form.get("mood_score"), 0)
+
+        if mood_score not in MOODS:
+            flash("Please select a mood.", "warning")
             return redirect(url_for("mood.mood_home"))
 
         col.insert_one({
             "user_id": current_user.id,
             "mood_score": mood_score,
-            "note": note,
             "created_at": utcnow(),
         })
 
-        log_activity(db, current_user.id, "mood_logged", {"score": mood_score})
-
-        # AI Mood Reflection (short)
-        prompt = (
-            f"User logged mood {mood_score}/10 with note: '{note}'. "
-            "Give a concise supportive reflection: acknowledge mood, one encouraging line, "
-            "one practical wellness action, and one optional reflective question. "
-            "Do not diagnose."
+        log_activity(
+            db,
+            current_user.id,
+            "mood_logged",
+            {"score": mood_score},
         )
+
+        prompt = f"""
+The user selected the mood "{MOODS[mood_score]}".
+
+Write a supportive wellbeing reflection. followed by a motivational qoute
+
+Maximum 50 words.
+
+Structure:
+
+🌿 Acknowledge the feeling.
+
+💛 Give one encouraging perspective in very breif hardly 10 words followed by a good qoute motivational.
+
+✨ Suggest one simple action for today.
+
+Do not ask follow-up questions.
+
+Do not diagnose.
+
+Keep it warm and reassuring and simple language easy to understand.
+"""
+
         reply, err = get_chat_reply(
             current_app.config.get("GEMINI_API_KEY"),
             current_app.config.get("GEMINI_MODEL"),
-            prompt
+            prompt,
         )
-        ai_reflection = reply if reply else "Thanks for checking in. Take one slow deep breath and be gentle with yourself."
 
-        flash("Mood logged.", "success")
-        history = list(col.find({"user_id": current_user.id}).sort("created_at", -1).limit(20))
-        return render_template("mood.html", history=history, ai_reflection=ai_reflection)
+        ai_reflection = (
+            reply
+            if reply
+            else "Thank you for checking in today. Every emotion deserves space, and taking a moment to notice how you feel is already a positive step."
+        )
 
-    history = list(col.find({"user_id": current_user.id}).sort("created_at", -1).limit(20))
-    return render_template("mood.html", history=history, ai_reflection=ai_reflection)
+        flash("Mood logged successfully!", "success")
+
+    history = list(
+        col.find({"user_id": current_user.id})
+        .sort("created_at", -1)
+        .limit(20)
+    )
+
+    return render_template(
+        "mood.html",
+        history=history,
+        ai_reflection=ai_reflection,
+    )

@@ -1,44 +1,34 @@
 {% extends "base.html" %}
 {% block content %}
-<section class="card">
-  <h2>Journal</h2>
-  <form method="POST" class="stack">
-    <input name="title" placeholder="Title (optional)">
-    <input name="mood_tag" placeholder="Mood tag (e.g. lonely, happy, anxious)">
-    <textarea name="content" rows="6" placeholder="Write your thoughts..." required></textarea>
-    <button type="submit">Save Entry</button>
-  </form>
-</section>
+<div style="margin-bottom: 3rem;">
+    <h1 style="font-weight: 300;">Your Journal</h1>
+    <p style="color: var(--text-secondary);">A private space to unpack your thoughts.</p>
+</div>
 
-<section class="card">
-  <h3>Search & Filters</h3>
-  <form method="GET" class="grid cards">
-    <input name="q" placeholder="Search keyword..." value="{{ q or '' }}">
-    <input name="mood" placeholder="Filter mood tag..." value="{{ mood or '' }}">
-    <select name="order">
-      <option value="recent" {% if order=='recent' %}selected{% endif %}>Recent</option>
-      <option value="oldest" {% if order=='oldest' %}selected{% endif %}>Oldest</option>
-    </select>
-    <button type="submit">Apply</button>
-  </form>
-  <div style="margin-top:.75rem;">
-    <a href="{{ url_for('journal.export_txt') }}">Export .txt</a> |
-    <a href="{{ url_for('journal.export_pdf') }}">Export PDF</a>
-  </div>
-</section>
+<!-- On mobile, CSS flex-direction: column forces this to stack -->
+<div class="journal-layout" style="display: grid; grid-template-columns: 1fr 2fr; gap: 3rem;">
+    
+    <div class="card" style="height: fit-content;">
+        <h3 style="margin-bottom: 1.5rem; font-weight: 400;">Write</h3>
+        <form method="POST">
+            <input type="text" name="title" placeholder="Entry Title (Optional)">
+            <textarea name="content" rows="8" placeholder="What is on your mind today?" required style="resize: vertical;"></textarea>
+            <button type="submit" class="btn-gold" style="width: 100%;">Save Entry</button>
+        </form>
+    </div>
 
-<section class="stack">
-  {% for e in entries %}
-    <article class="card">
-      <h4>{{ e.title }}</h4>
-      <small>{{ e.created_at.strftime('%d %b %Y, %I:%M %p') if e.created_at else '' }} {% if e.mood_tag %}• #{{ e.mood_tag }}{% endif %}</small>
-      <p style="white-space:pre-wrap;">{{ e.content }}</p>
-      <form method="POST" action="{{ url_for('journal.delete_entry', entry_id=e._id) }}">
-        <button type="submit">Delete</button>
-      </form>
-    </article>
-  {% else %}
-    <div class="card">No entries found.</div>
-  {% endfor %}
-</section>
+    <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+        {% for entry in entries %}
+        <div class="card" style="padding: 1.5rem;">
+            <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 1rem; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.5rem;">
+                <h2 style="font-size: 1.25rem; font-weight: 400; margin: 0;">{{ entry.title }}</h2>
+                <span style="font-size: 0.75rem; color: var(--accent-gold); text-transform: uppercase;">{{ entry.created_at.strftime('%Y-%m-%d') }}</span>
+            </div>
+            <p style="color: var(--text-secondary); line-height: 1.8; white-space: pre-wrap;">{{ entry.content }}</p>
+        </div>
+        {% else %}
+        <p style="color: var(--text-secondary); text-align: center; margin-top: 2rem;">No entries yet. Start writing...</p>
+        {% endfor %}
+    </div>
+</div>
 {% endblock %}

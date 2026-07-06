@@ -1,57 +1,299 @@
 {% extends "base.html" %}
+
 {% block content %}
-<section class="card">
-  <h2>Community Stories</h2>
 
-  <form method="POST" class="stack">
-    <input type="text" name="title" placeholder="Story title (optional)">
-    <textarea name="content" rows="5" placeholder="Share your story..." required></textarea>
-    <input type="text" name="tags" placeholder="Tags (comma separated): lonely, left out, anxious">
-    <label><input type="checkbox" name="is_public" checked> Share with community</label>
-    <button type="submit">Share Story</button>
-  </form>
-</section>
+<div style="max-width:800px;margin:0 auto;">
 
-<section class="card">
-  <h3>Browse by tag</h3>
-  <div style="display:flex;flex-wrap:wrap;gap:.5rem;">
-    <a href="{{ url_for('stories.stories_home') }}" class="chip {% if not selected_tag %}active{% endif %}">All</a>
-    {% for tag in all_tags %}
-      <a href="{{ url_for('stories.stories_home', tag=tag) }}" class="chip {% if selected_tag==tag %}active{% endif %}">#{{ tag }}</a>
+    <!-- Header -->
+
+    <div style="text-align:center;margin-bottom:2rem;">
+
+        <h1 style="font-weight:300;">
+            My Stories
+        </h1>
+
+        <p style="color:var(--text-secondary);">
+            Your experiences matter. Write for yourself, or anonymously help someone else feel less alone.
+        </p>
+
+    </div>
+
+
+    <!-- Story Form -->
+
+    <div class="card" style="margin-bottom:2rem;">
+
+        <form method="POST">
+
+            <div style="margin-bottom:1.5rem;">
+
+                <label style="font-weight:500;">
+                    Story Title
+                </label>
+
+                <input
+                    type="text"
+                    name="title"
+                    placeholder="Optional title..."
+                    style="margin-top:.5rem;"
+                >
+
+            </div>
+
+
+            <div style="margin-bottom:1.5rem;">
+
+                <label style="font-weight:500;">
+                    Your Story
+                </label>
+
+                <textarea
+                    name="content"
+                    rows="8"
+                    required
+                    placeholder="Write freely. Nobody will judge you here..."
+                    style="
+                        margin-top:.5rem;
+                        resize:vertical;
+                    "
+                ></textarea>
+
+            </div>
+
+
+            <div class="tag-section">
+
+                <label class="tag-title">
+                    Select emotions
+                </label>
+            
+                <div class="tag-container">
+            
+                    {% for tag in mood_tags %}
+            
+                    <label class="tag-chip">
+            
+                        <input
+                            type="checkbox"
+                            name="tags"
+                            value="{{ tag }}"
+                        >
+            
+                        <span>{{ tag }}</span>
+            
+                    </label>
+            
+                    {% endfor %}
+            
+                </div>
+            
+            </div>
+
+
+            <div class="share-toggle">
+
+                <label class="share-label">
+            
+                    <input
+                        type="checkbox"
+                        name="is_public"
+                    >
+            
+                    <span>
+                        Share anonymously with the community
+                    </span>
+            
+                </label>
+            
+            </div>
+
+
+            <button
+                class="btn-gold"
+                type="submit"
+                style="width:100%;"
+            >
+
+                Publish Story
+
+            </button>
+
+        </form>
+
+    </div>
+
+
+
+    <!-- Heading -->
+
+    <div style="
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        margin-bottom:1.5rem;
+    ">
+
+        <h2 style="font-weight:400;">
+
+            Your Stories
+
+        </h2>
+
+        <a
+    href="{{ url_for('stories.community_feed') }}"
+    class="btn-outline community-btn"
+>
+
+    🌍 Read Community Stories
+
+</a>
+    </div>
+
+
+
+    {% if stories %}
+
+    <div style="
+        display:grid;
+        gap:1.5rem;
+    ">
+
+        {% for story in stories %}
+
+        <div class="card">
+
+            <div style="
+                display:flex;
+                justify-content:space-between;
+                align-items:flex-start;
+                margin-bottom:1rem;
+            ">
+
+                <div>
+
+                    <h3 style="margin:0;">
+
+                        {{ story.title }}
+
+                    </h3>
+
+                    <small style="
+                        color:var(--text-secondary);
+                    ">
+
+                        {{ story.created_at.strftime("%d %b %Y") }}
+
+                    </small>
+
+                </div>
+                {% if story.is_public %}
+
+                <span style="
+                    background:#d4edda;
+                    color:#155724;
+                    padding:.35rem .8rem;
+                    border-radius:999px;
+                    font-size:.8rem;
+                ">
+
+                    🌍 Shared
+
+                </span>
+
+            {% else %}
+
+                <span style="
+                    background:#ececec;
+                    color:#666;
+                    padding:.35rem .8rem;
+                    border-radius:999px;
+                    font-size:.8rem;
+                ">
+
+                    🔒 Private
+
+                </span>
+
+            {% endif %}
+
+        </div>
+
+
+        {% if story.tags %}
+
+        <div style="
+            display:flex;
+            flex-wrap:wrap;
+            gap:.5rem;
+            margin-bottom:1rem;
+        ">
+
+            {% for tag in story.tags %}
+
+                <span style="
+                    background:rgba(200,169,106,.15);
+                    color:var(--accent-gold);
+                    padding:.35rem .8rem;
+                    border-radius:999px;
+                    font-size:.82rem;
+                ">
+
+                    {{ tag }}
+
+                </span>
+
+            {% endfor %}
+
+        </div>
+
+        {% endif %}
+
+
+        <p style="
+            white-space:pre-wrap;
+            line-height:1.8;
+            color:var(--text-primary);
+            margin:0;
+        ">
+
+            {{ story.content }}
+
+        </p>
+
+    </div>
+
     {% endfor %}
-  </div>
-</section>
 
-<section class="stack">
-  {% for story in stories %}
-    <article class="card blog-card">
-      <h3>{{ story.title }}</h3>
-      <small>{{ story.created_at.strftime('%d %b %Y, %I:%M %p') if story.created_at else '' }}</small>
-      <p style="white-space:pre-wrap;">{{ story.content }}</p>
+</div>
 
-      <div style="display:flex;flex-wrap:wrap;gap:.4rem;">
-        {% for t in story.tags or [] %}
-          <span class="chip">#{{ t }}</span>
-        {% endfor %}
-      </div>
+{% else %}
 
-      <div style="display:flex;gap:.4rem;margin-top:.8rem;">
-        <form method="POST" action="{{ url_for('stories.react_story', story_id=story._id, reaction='love', tag=selected_tag) }}">
-          <button>❤️ {{ story.reactions.love if story.reactions else 0 }}</button>
-        </form>
-        <form method="POST" action="{{ url_for('stories.react_story', story_id=story._id, reaction='hug', tag=selected_tag) }}">
-          <button>🤗 {{ story.reactions.hug if story.reactions else 0 }}</button>
-        </form>
-        <form method="POST" action="{{ url_for('stories.react_story', story_id=story._id, reaction='stay_strong', tag=selected_tag) }}">
-          <button>🌻 {{ story.reactions.stay_strong if story.reactions else 0 }}</button>
-        </form>
-        <form method="POST" action="{{ url_for('stories.react_story', story_id=story._id, reaction='appreciate', tag=selected_tag) }}">
-          <button>👏 {{ story.reactions.appreciate if story.reactions else 0 }}</button>
-        </form>
-      </div>
-    </article>
-  {% else %}
-    <div class="card">No public stories yet for this tag.</div>
-  {% endfor %}
-</section>
+<div class="card" style="
+    text-align:center;
+    padding:3rem 2rem;
+">
+
+    <div style="font-size:3rem;">
+        📖
+    </div>
+
+    <h3 style="margin-top:1rem;">
+        No stories yet
+    </h3>
+
+    <p style="
+        color:var(--text-secondary);
+        margin-top:.75rem;
+    ">
+
+        Your published stories will appear here.
+
+    </p>
+
+</div>
+
+{% endif %}
+
+</div>
+
 {% endblock %}

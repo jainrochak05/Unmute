@@ -1,39 +1,132 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Unmute</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-</head>
-<body>
-  <header class="topbar">
-    <div class="brand"><a href="{{ url_for('dashboard.dashboard_home') }}">Unmute</a></div>
-    <nav>
-      {% if current_user.is_authenticated %}
-        <a href="{{ url_for('dashboard.dashboard_home') }}">Dashboard</a>
-        <a href="{{ url_for('mood.mood_home') }}">Mood</a>
-        <a href="{{ url_for('journal.journal_home') }}">Journal</a>
-        <a href="{{ url_for('stories.stories_home') }}">Stories</a>
-        <a href="{{ url_for('chat.chat_home') }}">Chat</a>
-        <a href="{{ url_for('auth.logout') }}">Logout</a>
-      {% else %}
-        <a href="{{ url_for('auth.login') }}">Login</a>
-        <a href="{{ url_for('auth.register') }}">Register</a>
-      {% endif %}
-    </nav>
-  </header>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <main class="container">
+    <title>{% block title %}Unmute{% endblock %}</title>
+
+    <meta name="theme-color" content="#6C63FF">
+    <meta name="description" content="Unmute - AI Powered Emotional Wellness Platform">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    {% block head %}{% endblock %}
+</head>
+
+<body>
+
+<header class="navbar">
+    <div class="nav-container">
+
+        <div class="nav-brand">
+            <a href="{{ url_for('dashboard.dashboard_home') }}">
+                UNMUTE
+            </a>
+        </div>
+
+        <button
+            class="mobile-menu-btn"
+            type="button"
+            aria-label="Toggle Navigation"
+            onclick="toggleMenu()">
+            ☰
+        </button>
+
+        <nav class="nav-links" id="navLinks">
+
+            {% if current_user.is_authenticated %}
+
+                <a href="{{ url_for('dashboard.dashboard_home') }}"
+                   class="{% if request.endpoint == 'dashboard.dashboard_home' %}active{% endif %}">
+                    Dashboard
+                </a>
+
+                <a href="{{ url_for('mood.mood_home') }}"
+                   class="{% if request.endpoint == 'mood.mood_home' %}active{% endif %}">
+                    Mood
+                </a>
+
+                <a href="{{ url_for('journal.journal_home') }}"
+                   class="{% if request.endpoint == 'journal.journal_home' %}active{% endif %}">
+                    Journal
+                </a>
+
+                <a href="{{ url_for('stories.stories_home') }}"
+   class="{% if request.endpoint == 'stories.stories_home' %}active{% endif %}">
+    My Stories
+</a>
+
+<a href="{{ url_for('stories.community_feed') }}"
+   class="{% if request.endpoint == 'stories.community_feed' %}active{% endif %}">
+    Feed
+</a>
+
+                <a href="{{ url_for('chat.chat_home') }}"
+                   class="{% if request.endpoint == 'chat.chat_home' %}active{% endif %}">
+                    Chat
+                </a>
+
+                <a href="{{ url_for('auth.logout') }}" class="btn-outline">
+                    Logout
+                </a>
+
+            {% else %}
+
+                <a href="{{ url_for('auth.login') }}">
+                    Login
+                </a>
+
+                <a href="{{ url_for('auth.register') }}" class="btn-outline">
+                    Register
+                </a>
+
+            {% endif %}
+
+        </nav>
+    </div>
+</header>
+
+<main class="main-content">
+
     {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        {% for category, message in messages %}
-          <div class="alert {{ category }}">{{ message }}</div>
-        {% endfor %}
-      {% endif %}
+        {% if messages %}
+
+            <div class="flash-container">
+
+                {% for category, message in messages %}
+
+                    <div class="flash-message flash-{{ category }}">
+                        {{ message }}
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% endif %}
     {% endwith %}
 
     {% block content %}{% endblock %}
-  </main>
+
+</main>
+
+<script>
+
+function toggleMenu() {
+    document.getElementById("navLinks").classList.toggle("active");
+}
+
+document.querySelectorAll("#navLinks a").forEach(link => {
+    link.addEventListener("click", () => {
+        document.getElementById("navLinks").classList.remove("active");
+    });
+});
+
+</script>
+
+{% block scripts %}{% endblock %}
+
 </body>
 </html>

@@ -1,17 +1,125 @@
 {% extends "base.html" %}
 {% block content %}
-<section class="card">
-  <h2>Support Chat</h2>
-  <form method="post">
-    <textarea name="message" placeholder="How are you feeling today?" required>{{ user_message }}</textarea>
-    <button class="btn" type="submit">Send</button>
-  </form>
-  {% if error %}<div class="flash warning">{{ error }}</div>{% endif %}
-  {% if reply %}
-    <div class="item">
-      <strong>Assistant:</strong>
-      <p>{{ reply }}</p>
+
+<div style="max-width: 850px; margin: 0 auto;">
+
+    <!-- Header -->
+    <div style="text-align:center; margin-bottom:2.5rem;">
+        <h1 style="font-weight:300; margin-bottom:0.5rem;">Companion</h1>
+        <p style="color:var(--text-secondary);">
+            A safe space to express your thoughts. I'm here to listen without judgment.
+        </p>
     </div>
-  {% endif %}
-</section>
+
+    <!-- Input Card -->
+    <div class="card" style="padding:2rem; margin-bottom:2rem;">
+
+        <form method="POST">
+
+            <textarea
+                name="message"
+                rows="5"
+                placeholder="What's on your mind today?"
+                required
+                style="
+                    width:100%;
+                    resize:none;
+                    border:none;
+                    outline:none;
+                    background:transparent;
+                    color:var(--text-primary);
+                    font-size:1rem;
+                    line-height:1.8;
+                    font-family:inherit;
+                ">{% if user_message %}{{ user_message }}{% endif %}</textarea>
+
+            <div style="
+                display:flex;
+                justify-content:flex-end;
+                margin-top:1.5rem;
+            ">
+                <button class="btn-gold" type="submit">
+                    Reflect
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+
+    {% if error %}
+    <div class="card" style="padding:1rem; border-left:4px solid #c0392b; margin-bottom:2rem;">
+        <strong>Error</strong>
+        <p style="margin-top:0.5rem;">{{ error }}</p>
+    </div>
+    {% endif %}
+
+    {% if reply %}
+
+    <!-- Latest Reflection -->
+    <div class="card" style="padding:2rem; margin-bottom:2rem;">
+
+        <div style="
+            font-size:.75rem;
+            text-transform:uppercase;
+            letter-spacing:2px;
+            color:var(--accent-gold);
+            margin-bottom:.8rem;
+        ">
+            Your Reflection
+        </div>
+
+        <p style="
+            color:var(--text-secondary);
+            white-space:pre-wrap;
+            line-height:1.8;
+            margin-bottom:2rem;
+        ">
+            {{ user_message }}
+        </p>
+
+        <hr style="
+            border:none;
+            border-top:1px solid var(--border-subtle);
+            margin:2rem 0;
+        ">
+
+        <div style="
+            font-size:.75rem;
+            text-transform:uppercase;
+            letter-spacing:2px;
+            color:var(--accent-gold);
+            margin-bottom:.8rem;
+        ">
+            Companion's Response
+        </div>
+
+        <p style="
+            white-space:pre-wrap;
+            line-height:1.9;
+            font-size:1rem;
+        ">
+            {{ reply }}
+        </p>
+
+    </div>
+
+    {% endif %}
+
+    <!-- Placeholder for future history -->
+    <div class="card" style="padding:2rem; opacity:.7;">
+
+        <h3 style="font-weight:400; margin-bottom:1rem;">
+            Reflection Log
+        </h3>
+
+        <p style="color:var(--text-secondary); line-height:1.7;">
+            Your previous reflections will appear here in a future update, allowing you
+            to revisit your journey and notice how your thoughts evolve over time.
+        </p>
+
+    </div>
+
+</div>
+
 {% endblock %}
