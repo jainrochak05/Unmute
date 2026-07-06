@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="card">
+  <h2>Daily Prompt</h2>
+  <p>{{ prompt }}</p>
+  <a class="btn" href="{{ url_for('journal.journal_home') }}">Write Journal</a>
+</section>
+{% endblock %}

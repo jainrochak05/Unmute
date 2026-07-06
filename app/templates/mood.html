@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="card">
+  <h2>Daily Mood</h2>
+  <form method="post">
+    <input name="mood_score" type="number" min="1" max="10" placeholder="Mood score (1-10)" required>
+    <textarea name="note" placeholder="Optional note"></textarea>
+    <button class="btn" type="submit">Save Mood</button>
+  </form>
+</section>
+<section class="card">
+  <h3>Recent Mood Logs</h3>
+  {% for m in history %}
+    <div class="item">
+      <strong>{{ m.mood_score }}/10</strong> - {{ m.note }}
+    </div>
+  {% else %}
+    <p>No mood logs yet.</p>
+  {% endfor %}
+</section>
+{% endblock %}

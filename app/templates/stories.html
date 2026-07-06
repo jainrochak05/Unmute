@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="card">
+  <h2>Community Stories</h2>
+
+  <form method="POST" class="stack">
+    <input type="text" name="title" placeholder="Story title (optional)">
+    <textarea name="content" rows="5" placeholder="Share your story..." required></textarea>
+    <input type="text" name="tags" placeholder="Tags (comma separated): lonely, left out, anxious">
+    <label><input type="checkbox" name="is_public" checked> Share with community</label>
+    <button type="submit">Share Story</button>
+  </form>
+</section>
+
+<section class="card">
+  <h3>Browse by tag</h3>
+  <div style="display:flex;flex-wrap:wrap;gap:.5rem;">
+    <a href="{{ url_for('stories.stories_home') }}" class="chip {% if not selected_tag %}active{% endif %}">All</a>
+    {% for tag in all_tags %}
+      <a href="{{ url_for('stories.stories_home', tag=tag) }}" class="chip {% if selected_tag==tag %}active{% endif %}">#{{ tag }}</a>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="stack">
+  {% for story in stories %}
+    <article class="card blog-card">
+      <h3>{{ story.title }}</h3>
+      <small>{{ story.created_at.strftime('%d %b %Y, %I:%M %p') if story.created_at else '' }}</small>
+      <p style="white-space:pre-wrap;">{{ story.content }}</p>
+
+      <div style="display:flex;flex-wrap:wrap;gap:.4rem;">
+        {% for t in story.tags or [] %}
+          <span class="chip">#{{ t }}</span>
+        {% endfor %}
+      </div>
+
+      <div style="display:flex;gap:.4rem;margin-top:.8rem;">
+        <form method="POST" action="{{ url_for('stories.react_story', story_id=story._id, reaction='love', tag=selected_tag) }}">
+          <button>❤️ {{ story.reactions.love if story.reactions else 0 }}</button>
+        </form>
+        <form method="POST" action="{{ url_for('stories.react_story', story_id=story._id, reaction='hug', tag=selected_tag) }}">
+          <button>🤗 {{ story.reactions.hug if story.reactions else 0 }}</button>
+        </form>
+        <form method="POST" action="{{ url_for('stories.react_story', story_id=story._id, reaction='stay_strong', tag=selected_tag) }}">
+          <button>🌻 {{ story.reactions.stay_strong if story.reactions else 0 }}</button>
+        </form>
+        <form method="POST" action="{{ url_for('stories.react_story', story_id=story._id, reaction='appreciate', tag=selected_tag) }}">
+          <button>👏 {{ story.reactions.appreciate if story.reactions else 0 }}</button>
+        </form>
+      </div>
+    </article>
+  {% else %}
+    <div class="card">No public stories yet for this tag.</div>
+  {% endfor %}
+</section>
+{% endblock %}

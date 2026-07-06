@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="card">
+  <h2>Dashboard</h2>
+  {% if reminder %}<div class="alert warning">{{ reminder }}</div>{% endif %}
+  <div class="quote-card">🌟 {{ quote }}</div>
+
+  <div class="grid cards">
+    <div class="mini-card"><h4>Current Mood</h4><p style="color:{{ current_mood_color }}">{{ current_mood_emoji }} {{ current_mood_label }} ({{ stats.get('current_mood','-') }})</p></div>
+    <div class="mini-card"><h4>Mood Streak</h4><p>{{ stats.get('mood_streak',0) }} days</p></div>
+    <div class="mini-card"><h4>Total Journal Entries</h4><p>{{ stats.get('total_journals',0) }}</p></div>
+    <div class="mini-card"><h4>Total Stories Shared</h4><p>{{ stats.get('total_stories',0) }}</p></div>
+    <div class="mini-card"><h4>Total AI Conversations</h4><p>{{ stats.get('total_ai_chats',0) }}</p></div>
+    <div class="mini-card"><h4>Daily Prompt Status</h4><p>{{ "Done ✅" if stats.get('prompt_done') else "Pending ⏳" }}</p></div>
+  </div>
+</section>
+
+<section class="card">
+  <h3>Mood Analytics</h3>
+  <div style="height:280px"><canvas id="weeklyChart"></canvas></div>
+  <div style="height:320px;margin-top:1rem"><canvas id="monthlyChart"></canvas></div>
+</section>
+
+<section class="card">
+  <h3>Emotional Insights</h3>
+  <ul>
+    <li>Most common emotion: <strong>{{ insights.get('most_common_emotion','N/A') }}</strong></li>
+    <li>Best emotional week: <strong>{{ insights.get('best_week_avg',0) }}</strong></li>
+    <li>Lowest emotional week: <strong>{{ insights.get('lowest_week_avg',0) }}</strong></li>
+    <li>Most active journaling day: <strong>{{ insights.get('most_active_journaling_day','N/A') }}</strong></li>
+    <li>Average weekly mood: <strong>{{ insights.get('avg_weekly_mood',0) }}</strong></li>
+  </ul>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const weeklyLabels = {{ trends.get('weekly', {}).get('labels', []) | tojson }};
+    const weeklyValues = {{ trends.get('weekly', {}).get('values', []) | tojson }};
+
+    const monthlyLabels = {{ trends.get('monthly', {}).get('labels', []) | tojson }};
+    const monthlyValues = {{ trends.get('monthly', {}).get('values', []) | tojson }};
+
+    const weeklyCanvas = document.getElementById("weeklyChart");
+    const monthlyCanvas = document.getElementById("monthlyChart");
+
+    if (weeklyCanvas) {
+        new Chart(weeklyCanvas, {
+            type: "line",
+            data: {
+                labels: weeklyLabels,
+                datasets: [{
+                    label: "Weekly Mood Trend",
+                    data: weeklyValues,
+                    tension: 0.35,
+                    fill: false
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+    }
+
+    if (monthlyCanvas) {
+        new Chart(monthlyCanvas, {
+            type: "line",
+            data: {
+                labels: monthlyLabels,
+                datasets: [{
+                    label: "Monthly Mood Trend",
+                    data: monthlyValues,
+                    tension: 0.35,
+                    fill: false
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

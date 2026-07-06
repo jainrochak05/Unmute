@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="card">
+  <h2>Journal</h2>
+  <form method="POST" class="stack">
+    <input name="title" placeholder="Title (optional)">
+    <input name="mood_tag" placeholder="Mood tag (e.g. lonely, happy, anxious)">
+    <textarea name="content" rows="6" placeholder="Write your thoughts..." required></textarea>
+    <button type="submit">Save Entry</button>
+  </form>
+</section>
+
+<section class="card">
+  <h3>Search & Filters</h3>
+  <form method="GET" class="grid cards">
+    <input name="q" placeholder="Search keyword..." value="{{ q or '' }}">
+    <input name="mood" placeholder="Filter mood tag..." value="{{ mood or '' }}">
+    <select name="order">
+      <option value="recent" {% if order=='recent' %}selected{% endif %}>Recent</option>
+      <option value="oldest" {% if order=='oldest' %}selected{% endif %}>Oldest</option>
+    </select>
+    <button type="submit">Apply</button>
+  </form>
+  <div style="margin-top:.75rem;">
+    <a href="{{ url_for('journal.export_txt') }}">Export .txt</a> |
+    <a href="{{ url_for('journal.export_pdf') }}">Export PDF</a>
+  </div>
+</section>
+
+<section class="stack">
+  {% for e in entries %}
+    <article class="card">
+      <h4>{{ e.title }}</h4>
+      <small>{{ e.created_at.strftime('%d %b %Y, %I:%M %p') if e.created_at else '' }} {% if e.mood_tag %}• #{{ e.mood_tag }}{% endif %}</small>
+      <p style="white-space:pre-wrap;">{{ e.content }}</p>
+      <form method="POST" action="{{ url_for('journal.delete_entry', entry_id=e._id) }}">
+        <button type="submit">Delete</button>
+      </form>
+    </article>
+  {% else %}
+    <div class="card">No entries found.</div>
+  {% endfor %}
+</section>
+{% endblock %}

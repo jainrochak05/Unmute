@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="card">
+  <h2>Support Chat</h2>
+  <form method="post">
+    <textarea name="message" placeholder="How are you feeling today?" required>{{ user_message }}</textarea>
+    <button class="btn" type="submit">Send</button>
+  </form>
+  {% if error %}<div class="flash warning">{{ error }}</div>{% endif %}
+  {% if reply %}
+    <div class="item">
+      <strong>Assistant:</strong>
+      <p>{{ reply }}</p>
+    </div>
+  {% endif %}
+</section>
+{% endblock %}

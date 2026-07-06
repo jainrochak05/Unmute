@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="card">
+  <h2>Helpful Resources</h2>
+  {% for r in resources %}
+    <div class="item">
+      <a href="{{ r.link }}" target="_blank">{{ r.title }}</a>
+    </div>
+  {% endfor %}
+</section>
+{% endblock %}
