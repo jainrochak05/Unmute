@@ -1,34 +1,293 @@
 {% extends "base.html" %}
+
 {% block content %}
-<div style="margin-bottom: 3rem;">
-    <h1 style="font-weight: 300;">Your Journal</h1>
-    <p style="color: var(--text-secondary);">A private space to unpack your thoughts.</p>
-</div>
 
-<!-- On mobile, CSS flex-direction: column forces this to stack -->
-<div class="journal-layout" style="display: grid; grid-template-columns: 1fr 2fr; gap: 3rem;">
-    
-    <div class="card" style="height: fit-content;">
-        <h3 style="margin-bottom: 1.5rem; font-weight: 400;">Write</h3>
-        <form method="POST">
-            <input type="text" name="title" placeholder="Entry Title (Optional)">
-            <textarea name="content" rows="8" placeholder="What is on your mind today?" required style="resize: vertical;"></textarea>
-            <button type="submit" class="btn-gold" style="width: 100%;">Save Entry</button>
-        </form>
+<div style="max-width:1200px;margin:0 auto;">
+
+    <div style="text-align:center;margin-bottom:2.5rem;">
+
+        <h1 style="
+            font-weight:300;
+            margin-bottom:.75rem;">
+
+            Your Journal
+
+        </h1>
+
+        <p style="
+            color:var(--text-secondary);
+            max-width:650px;
+            margin:0 auto;
+            line-height:1.8;">
+
+            A private space where your thoughts stay with you.
+            Write freely, without judgement.
+
+        </p>
+
     </div>
 
-    <div style="display: flex; flex-direction: column; gap: 1.5rem;">
-        {% for entry in entries %}
-        <div class="card" style="padding: 1.5rem;">
-            <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 1rem; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.5rem;">
-                <h2 style="font-size: 1.25rem; font-weight: 400; margin: 0;">{{ entry.title }}</h2>
-                <span style="font-size: 0.75rem; color: var(--accent-gold); text-transform: uppercase;">{{ entry.created_at.strftime('%Y-%m-%d') }}</span>
-            </div>
-            <p style="color: var(--text-secondary); line-height: 1.8; white-space: pre-wrap;">{{ entry.content }}</p>
+
+    <div class="journal-layout">
+
+        <!-- WRITE PANEL -->
+
+        <div class="card journal-editor">
+
+            <h2 style="
+                margin-bottom:1.5rem;
+                font-weight:400;">
+
+                ✍️ New Entry
+
+            </h2>
+
+            <form method="POST">
+
+                <input
+                    type="text"
+                    name="title"
+                    placeholder="Give today's entry a title (optional)"
+                >
+
+                <textarea
+                    name="content"
+                    placeholder="What's on your mind today?"
+                    required
+                ></textarea>
+
+                <button
+                    class="btn-gold"
+                    type="submit"
+                    style="width:100%;">
+
+                    Save Entry
+
+                </button>
+
+            </form>
+
         </div>
-        {% else %}
-        <p style="color: var(--text-secondary); text-align: center; margin-top: 2rem;">No entries yet. Start writing...</p>
-        {% endfor %}
+
+
+        <!-- ENTRIES -->
+
+        <div class="journal-history">
+
+            {% if entries %}
+
+                {% for entry in entries %}
+
+                <div class="card journal-entry">
+
+                    <div class="journal-header">
+
+                        <div>
+
+                            <h3>
+
+                                {{ entry.title }}
+
+                            </h3>
+
+                            <small>
+
+                                {{ entry.created_at.strftime('%d %b %Y • %I:%M %p') }}
+
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                    <p>
+
+                        {{ entry.content }}
+
+                    </p>
+
+                </div>
+
+                {% endfor %}
+
+            {% else %}
+
+                <div class="card empty-state">
+
+                    <div style="font-size:3rem;">
+
+                        📖
+
+                    </div>
+
+                    <h3 style="margin-top:1rem;">
+
+                        No Journal Entries Yet
+
+                    </h3>
+
+                    <p>
+
+                        Every journey begins with a single thought.
+                        Write your first entry today.
+
+                    </p>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
     </div>
+
 </div>
+
+
+<style>
+
+.journal-layout{
+
+    display:grid;
+
+    grid-template-columns:380px 1fr;
+
+    gap:2rem;
+
+    align-items:start;
+
+}
+
+.journal-editor{
+
+    position:sticky;
+
+    top:100px;
+
+}
+
+.journal-editor input{
+
+    margin-bottom:1rem;
+
+}
+
+.journal-editor textarea{
+
+    min-height:340px;
+
+    resize:vertical;
+
+    font-size:16px;
+
+    line-height:1.8;
+
+    margin-bottom:1rem;
+
+}
+
+.journal-history{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:1.5rem;
+
+}
+
+.journal-entry{
+
+    padding:1.8rem;
+
+}
+
+.journal-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:1.2rem;
+
+    border-bottom:1px solid var(--border-subtle);
+
+    padding-bottom:.8rem;
+
+}
+
+.journal-header h3{
+
+    margin:0;
+
+    font-weight:500;
+
+}
+
+.journal-header small{
+
+    color:var(--accent-gold);
+
+}
+
+.journal-entry p{
+
+    white-space:pre-wrap;
+
+    line-height:1.9;
+
+    color:var(--text-secondary);
+
+    font-size:15px;
+
+}
+
+.empty-state{
+
+    text-align:center;
+
+    padding:4rem 2rem;
+
+}
+
+.empty-state p{
+
+    margin-top:.75rem;
+
+    color:var(--text-secondary);
+
+    line-height:1.8;
+
+}
+
+@media(max-width:900px){
+
+    .journal-layout{
+
+        display:flex;
+
+        flex-direction:column;
+
+        gap:1.5rem;
+
+    }
+
+    .journal-editor{
+
+        position:static;
+
+    }
+
+    .journal-editor textarea{
+
+        min-height:240px;
+
+    }
+
+}
+
+</style>
+
 {% endblock %}
