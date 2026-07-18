@@ -928,3 +928,101 @@ a:focus-visible{
     outline-offset:3px;
 
 }
+
+
+/* Counselor Page */
+
+.counselor-page{
+    max-width:1100px;
+    margin:2rem auto 4rem;
+}
+
+.counselor-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+    gap:1.8rem;
+    margin:3rem 0;
+}
+
+.counselor-card{
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    min-height:380px;
+    padding:2rem;
+    text-align:center;
+    border:1px solid var(--border-subtle);
+    border-radius:18px;
+    background:rgba(255,255,255,.02);
+    transition:.3s ease;
+}
+
+.counselor-card:hover{
+    transform:translateY(-6px);
+    border-color:var(--accent-gold);
+    box-shadow:0 12px 30px rgba(0,0,0,.35);
+}
+
+.counselor-avatar{
+    width:80px;
+    height:80px;
+    margin:0 auto 1rem;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:2.2rem;
+    background:rgba(212,175,55,.12);
+    border:1px solid rgba(212,175,55,.3);
+}
+
+.counselor-btn{
+    width:100%;
+    margin-top:1.5rem;
+    padding:14px;
+    border:none;
+    border-radius:12px;
+    background:var(--accent-gold);
+    color:#000;
+    font-weight:600;
+    cursor:pointer;
+    transition:.25s;
+}
+
+.counselor-btn:hover{
+    transform:translateY(-2px);
+    filter:brightness(1.05);
+}
+
+.booking-card{
+    max-width:700px;
+    margin:0 auto;
+    padding:2rem;
+}
+
+.booking-card form{
+    display:flex;
+    flex-direction:column;
+    gap:1rem;
+}
+
+.booking-card input,
+.booking-card textarea{
+    width:100%;
+}
+
+@media(max-width:768px){
+    .counselor-grid{
+        grid-template-columns:1fr;
+    }
+
+    .booking-card{
+        max-width:100%;
+    }
+}
+
+
+
+
+
+

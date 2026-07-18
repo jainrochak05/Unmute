@@ -164,4 +164,28 @@
 
 </div>
 
+
+{% if show_counselor_alert %}
+<div class="card" style="
+    margin-top:2rem;
+    border-left:4px solid #c8a96a;
+    background:rgba(200,169,106,.08);
+">
+    <h3 style="margin-bottom:.8rem;">
+        💛 We're Here to Support You
+    </h3>
+
+    <p style="color:var(--text-secondary);line-height:1.7;">
+        We've noticed you've been feeling low over your recent check-ins.
+        Talking to someone can really help. Our counselors are here whenever you're ready.
+    </p>
+
+    <div style="margin-top:1.5rem;">
+        <a href="{{ url_for('counselor.counselor') }}" class="btn-primary">
+            View Counselors
+        </a>
+    </div>
+</div>
+{% endif %}
+
 {% endblock %}

@@ -12,7 +12,8 @@ from .routes.dashboard import dashboard_bp
 from .routes.profile import profile_bp
 from .routes.resources import resources_bp
 from .models import User
-
+from .routes.comfort import comfort_bp
+from .routes.counselor import counselor_bp
 
 def create_app():
     app = Flask(__name__)
@@ -35,6 +36,8 @@ def create_app():
     app.register_blueprint(dashboard_bp, url_prefix="/dashboard")
     app.register_blueprint(profile_bp, url_prefix="/profile")
     app.register_blueprint(resources_bp, url_prefix="/resources")
+    app.register_blueprint(comfort_bp, url_prefix="/comfort")
+    app.register_blueprint(counselor_bp, url_prefix="/counselor")
 
     @app.errorhandler(404)
     def not_found(_):

@@ -1,0 +1,236 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div style="max-width:1000px;margin:0 auto;">
+
+    <div style="text-align:center;margin-bottom:3rem;">
+        <h1 style="font-weight:300;">Professional Counseling Support</h1>
+        <p style="color:var(--text-secondary);max-width:650px;margin:auto;">
+            Sometimes talking to someone can make all the difference.
+            Browse our counselors and request a session whenever you're ready.
+        </p>
+    </div>
+
+    <!-- Counselors -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;margin-bottom:3rem;">
+
+        <div class="card" style="padding:1.8rem;text-align:center;">
+            <div style="font-size:3rem;">👩🏻‍⚕️</div>
+            <h3 style="margin-top:1rem;">Dr. Meera Sharma</h3>
+
+            <p style="color:var(--accent-gold);margin:.5rem 0;">
+                ⭐ 4.9 · 8 Years
+            </p>
+
+            <p style="color:var(--text-secondary);margin-bottom:1rem;">
+                Clinical Psychologist
+            </p>
+
+            <p style="font-size:.95rem;color:var(--text-secondary);line-height:1.6;">
+                Anxiety • Stress • Depression • Emotional Wellbeing
+            </p>
+
+            <button
+                class="btn-primary"
+                style="
+
+        margin-top:1.5rem;
+
+        width:100%;
+
+        padding:14px 20px;
+
+        background:var(--accent-gold);
+
+        color:#000;
+
+        border:none;
+
+        border-radius:12px;
+
+        font-weight:600;
+
+        cursor:pointer;
+
+    "
+                onclick="selectCounselor('Dr. Meera Sharma')">
+                Book Appointment
+            </button>
+        </div>
+
+        <div class="card" style="padding:1.8rem;text-align:center;">
+            <div style="font-size:3rem;">👨🏻‍⚕️</div>
+            <h3 style="margin-top:1rem;">Dr. Arjun Kapoor</h3>
+
+            <p style="color:var(--accent-gold);margin:.5rem 0;">
+                ⭐ 4.8 · 10 Years
+            </p>
+
+            <p style="color:var(--text-secondary);margin-bottom:1rem;">
+                Mental Wellness Counselor
+            </p>
+
+            <p style="font-size:.95rem;color:var(--text-secondary);line-height:1.6;">
+                Relationships • Burnout • Career Stress
+            </p>
+
+            <button
+                class="btn-primary"
+                style="
+
+        margin-top:1.5rem;
+
+        width:100%;
+
+        padding:14px 20px;
+
+        background:var(--accent-gold);
+
+        color:#000;
+
+        border:none;
+
+        border-radius:12px;
+
+        font-weight:600;
+
+        cursor:pointer;
+
+    "
+                onclick="selectCounselor('Dr. Arjun Kapoor')">
+                Book Appointment
+            </button>
+        </div>
+
+        <div class="card" style="padding:1.8rem;text-align:center;">
+            <div style="font-size:3rem;">👩🏽‍⚕️</div>
+            <h3 style="margin-top:1rem;">Dr. Priya Nair</h3>
+
+            <p style="color:var(--accent-gold);margin:.5rem 0;">
+                ⭐ 4.7 · 6 Years
+            </p>
+
+            <p style="color:var(--text-secondary);margin-bottom:1rem;">
+                CBT Specialist
+            </p>
+
+            <p style="font-size:.95rem;color:var(--text-secondary);line-height:1.6;">
+                Self-esteem • Emotional Wellness • Personal Growth
+            </p>
+
+            <button
+                class="btn-primary"
+                style="
+
+        margin-top:1.5rem;
+
+        width:100%;
+
+        padding:14px 20px;
+
+        background:var(--accent-gold);
+
+        color:#000;
+
+        border:none;
+
+        border-radius:12px;
+
+        font-weight:600;
+
+        cursor:pointer;
+
+    "
+                onclick="selectCounselor('Dr. Priya Nair')">
+                Book Appointment
+            </button>
+        </div>
+
+    </div>
+
+    <!-- Booking Form -->
+    <div class="card" id="booking-form" style="padding:2rem;">
+
+        <h2 style="margin-bottom:.5rem;font-weight:400;">
+            Request an Appointment
+        </h2>
+
+        <p style="color:var(--text-secondary);margin-bottom:2rem;">
+            Fill in your details and we'll contact you to confirm your session.
+        </p>
+
+        <form method="POST" style="display:flex;flex-direction:column;gap:1rem;">
+
+            <input
+                id="selected-counselor"
+                type="text"
+                name="counselor"
+                placeholder="Preferred Counselor"
+                readonly
+                required>
+
+            <input
+                type="text"
+                name="name"
+                placeholder="Full Name"
+                required>
+
+            <input
+                type="email"
+                name="email"
+                placeholder="Email Address"
+                required>
+
+            <input
+                type="tel"
+                name="phone"
+                placeholder="Phone Number"
+                required>
+
+            <input
+                type="date"
+                name="preferred_date"
+                required>
+
+            <input
+                type="time"
+                name="preferred_time"
+                required>
+
+            <textarea
+                rows="5"
+                name="message"
+                placeholder="Briefly tell us what you'd like support with..."></textarea>
+
+<button
+type="submit"
+style="
+    width:100%;
+    padding:14px 20px;
+    background:var(--accent-gold);
+    color:#000;
+    border:none;
+    border-radius:12px;
+    font-weight:600;
+    cursor:pointer;
+">
+Request Appointment
+</button>
+
+        </form>
+
+    </div>
+
+</div>
+
+<script>
+function selectCounselor(name){
+    document.getElementById("selected-counselor").value = name;
+
+    document.getElementById("booking-form").scrollIntoView({
+        behavior:"smooth"
+    });
+}
+</script>
+
+{% endblock %}

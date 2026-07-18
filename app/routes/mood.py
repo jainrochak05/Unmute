@@ -24,6 +24,7 @@ def mood_home():
             "mood.html",
             history=[],
             ai_reflection=None,
+            show_counselor_alert=False,
         )
 
     db = extensions.mongo_db
@@ -55,7 +56,7 @@ def mood_home():
         prompt = f"""
 The user selected the mood "{MOODS[mood_score]}".
 
-Write a supportive wellbeing reflection. followed by a motivational qoute
+Write a supportive wellbeing reflection followed by a motivational quote.
 
 Maximum 50 words.
 
@@ -63,7 +64,7 @@ Structure:
 
 🌿 Acknowledge the feeling.
 
-💛 Give one encouraging perspective in very breif hardly 10 words followed by a good qoute motivational.
+💛 Give one encouraging perspective.
 
 ✨ Suggest one simple action for today.
 
@@ -71,7 +72,7 @@ Do not ask follow-up questions.
 
 Do not diagnose.
 
-Keep it warm and reassuring and simple language easy to understand.
+Keep it warm, reassuring and easy to understand.
 """
 
         reply, err = get_chat_reply(
@@ -94,8 +95,21 @@ Keep it warm and reassuring and simple language easy to understand.
         .limit(20)
     )
 
+    # ---------- Counselor Recommendation ----------
+    show_counselor_alert = False
+
+    recent_moods = history[:5]
+
+    if len(recent_moods) == 5:
+        avg_score = sum(m["mood_score"] for m in recent_moods) / 5
+
+        # Recommend counselor if average mood is Anxious/Heavy
+        if avg_score <= 4:
+            show_counselor_alert = True
+
     return render_template(
         "mood.html",
         history=history,
         ai_reflection=ai_reflection,
+        show_counselor_alert=show_counselor_alert,
     )

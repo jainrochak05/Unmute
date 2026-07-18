@@ -68,6 +68,19 @@
                     Chat
                 </a>
 
+                <a href="{{ url_for('comfort.comfort_home') }}"
+                   class="{% if request.endpoint == 'comfort.comfort_home' %}active{% endif %}">
+                    Comfort Corner
+                </a>
+
+                <a href="{{ url_for('counselor.counselor') }}"
+
+   class="{% if request.endpoint == 'counselor.counselor' %}active{% endif %}">
+
+    Counselor
+
+</a>
+
                 <a href="{{ url_for('auth.logout') }}" class="btn-outline">
                     Logout
                 </a>
